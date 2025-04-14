@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flappy Shrimp</title>
+    <style>
+        body {
+            background-image: url("infopage.png");
+            background-color: #117864;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+            text-align: center;
+        }
+
+        .info-text {
+            font-family: "Courier New", Courier, monospace;
+            color: #04161e;
+            font-size: 16px; 
+            font-weight: 700; 
+            width: 80%; 
+            margin: 220px auto 0; 
+            line-height: 1.5; 
+        }
+
+        .user {
+            font-family: "Courier New", Courier, monospace;
+            color: #021118;
+            font-size: 20px; 
+            font-weight: 700; 
+            width: 80%; 
+            margin: 20px auto 0; 
+            line-height: 1.5;  
+        }
+
+        input {
+            font-family: "Courier New", Courier, monospace;
+            font-size: 18px;
+            padding: 5px;
+            margin-top: 10px;
+        }
+
+        button {
+            font-family: "Courier New", Courier, monospace;
+            font-size: 18px;
+            padding: 5px 10px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        #greeting {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #ec8ba7;
+            font-size: 23px;
+            font-weight: 800;
+            padding: 5px 10px;
+            margin-top: 23px; 
+            background-color: #FFFFCC;
+            display: block; 
+            text-align: center; 
+            border-radius: 5px;
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: red;
+            opacity: 0.7;
+            position: absolute;
+        }
+
+        .easybutton img,
+        .hardbutton img {
+            width: 400px;
+            height: auto;
+            animation: pulse 1.5s infinite ease-in-out;
+            display: block;
+            margin: 20px auto; 
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); } 
+            100% { transform: scale(1); } 
+        }
+
+
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 100px; 
+        }
+        
+
+    </style>
+</head>
+
+<body>
+
+    <content> 
+        
+
+        <p class="info-text">
+            Flappy Shrimp is restricted to one player only and has 2 modes, easy and hard. The player must navigate their Pisayan Bestie, Flappy Shrimp, to pass through the upcoming pipe gaps as many as possible without touching the ground, the ceiling, or the pipe structures. Accumulate points by playing to acquire special Flappy Shrimp Skins!
+        </p>
+    
+        <form class="user" onsubmit="saveUsername(event)">
+            <label for="username">Enter Username:</label>
+            <input type="text" id="username" name="username">
+            <button type="submit">Save Username</button>
+        </form>
+    
+        <div id="greeting"></div>
+    
+        <script>
+            function saveUsername(event) {
+                event.preventDefault(); 
+                let username = document.getElementById("username").value;
+
+                if (username.match(/^[A-Za-z0-9]+$/)) { 
+                    localStorage.setItem("username", username);
+                    displayGreeting();
+                    createConfetti(0);
+
+                        function createConfetti(count) {
+                            if (count >= 100) return;
+    
+                            let confetti = document.createElement("div");
+    
+                            confetti.className = "confetti";
+                            confetti.style.position = "fixed";
+                            confetti.style.top = 0;
+                            confetti.style.left = Math.random() * 100 + "vw";
+                            confetti.style.backgroundColor = "rgb(" + Math.random() * 255 + ", " + Math.random() * 255 + ", " + Math.random() * 255 + ")";
+                            document.body.appendChild(confetti);
+    
+                            let fallInterval = setInterval(function() {
+                                let topValue = parseInt(confetti.style.top);
+                                if (topValue > window.innerHeight) {
+                                    clearInterval(fallInterval);
+                                    confetti.remove();
+                                } else {
+                                    confetti.style.top = topValue + 5 + "px";
+                                }
+                            }, 30);
+    
+                            setTimeout(function() {
+                                createConfetti(count + 1);
+                            }, 30);
+                        }    
+
+                } else {
+                    alert("Invalid username! Only letters and numbers are allowed.");
+                }
+            }
+
+            function displayGreeting() {
+                let savedUsername = localStorage.getItem("username");
+                if (savedUsername) {
+                    document.getElementById("greeting").innerText = `Welcome, ${savedUsername}!`;
+                }
+            }
+
+            window.onload = displayGreeting;
+
+    
+        </script>
+
+        <div class="buttons-container">
+            <a href="easy.html" class="easybutton">
+                <img src="easy.png" alt="Easy Mode">
+            </a>
+
+            <a href="hard.html" class="hardbutton">
+                <img src="hard.png" alt="Hard Mode">
+            </a>
+        </div>
+        
+    </content>
+</body>
+</html>
