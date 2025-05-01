@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="author" content="GR3-Lithium">
+  <meta name="keywords" content="AA2">
+  <meta name="revised" content="02-05-2025">
+  <link rel="icon" type="image/png" href="images/favicon.ico"/>
+  <title>Flappy Shrimp | Easy</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    .background {
+      height: 100vh;
+      width: 100vw;
+      background: url('images/EasyMode BG.png') no-repeat center center fixed;
+      background-size: cover;
+    }
+    .shrimp {
+      height: 100px;
+      width: 130px;
+      position: fixed;
+      top: 40vh;
+      left: 30vw;
+      z-index: 100;
+    }
+    .pipe_sprite {
+      position: fixed;
+      top: 40vh;
+      left: 100vw;
+      height: 70vh;
+      width: 6vw;
+      border: 5px solid rgb(10, 76, 28);
+      z-index: 10;
+    }
+    .message {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 9999;
+    }
+    .welcome img {
+      width: 760px;   
+      height: auto;   
+      display: block;
+      margin: 0 auto;
+    }
+    .messagestyle {
+      font-family: "Courier New", Courier, monospace;
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translateX(-50%);
+      color: black;
+      font-size: 2.5vh;
+      font-weight: bold;
+      text-align: center;
+    }
+    .buttons-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 20px;
+      z-index: 11;
+    }
+    .restartbutton img,
+    .exitbutton img {
+      width: 250px;
+      height: auto;
+      display: block;
+      margin: 0;
+    }
+    .score {
+      font-family: Arial, Helvetica, sans-serif;
+      position: fixed;
+      z-index: 20;
+      font-size: 4vh;
+      font-weight: 100;
+      color: white;
+      -webkit-text-stroke-width: 1px;
+      -webkit-text-stroke-color: black;
+      top: 0;
+      left: 0;
+      margin: 10px;
+    }
+    .score_val, .Accumulated_score_val, .High_score_val {
+      color: gold;
+      font-weight: bold;
+      z-index: 20;
+    }
+    @media only screen and (max-width: 1080px) {
+      .score {
+        font-size: 3vh;
+      }
+      .shrimp {
+        width: 120px;
+        height: 90px;
+      }
+      .pipe_sprite {
+        width: 14vw;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="background"></div>
+  <img src="images/shrimp.png" alt="shrimp-img" class="shrimp" id="shrimp-1" />
+  <div class="message welcome">
+    <img src="images/welcome.png" alt="Welcome Image" />
+  </div>
+
+  <div class="score">
+    <div>
+      <span class="score_title">Score: </span>
+      <span class="score_val">0</span>
+    </div>
+    <div>
+      <span class="Accumulatedl_score_title">Accumulated Points: </span>
+      <span class="Accumulated_score_val">0</span>
+    </div>
+    <div>
+      <span class="High_score_title">Highest Score: </span>
+      <span class="High_score_val">0</span>
+    </div>
+  </div>
+
+  <script>
+    window.onload = function () {
+      let accumulatedScore = localStorage.getItem("accumulatedScore") || 0;
+      accumulatedScore = parseInt(accumulatedScore);
+
+      let highScore = localStorage.getItem("highScore") || 0;
+      highScore = parseInt(highScore);
+
+      document.querySelector('.Accumulated_score_val').innerHTML = accumulatedScore;
+      document.querySelector('.High_score_val').innerHTML = highScore;
+    }
+
+    let move_speed = 3, gravity = 0.5;
+    let shrimp = document.querySelector('.shrimp');
+    let img = document.getElementById('shrimp-1');
+    let shrimp_props = shrimp.getBoundingClientRect();
+    let background = document.querySelector('.background').getBoundingClientRect();
+    let score_val = document.querySelector('.score_val');
+    let message = document.querySelector('.message');
+    let game_state = 'Start';
+
+    let Accumulated_score = parseInt(localStorage.getItem('accumulatedScore')) || 0;
+    let highScore = parseInt(localStorage.getItem('highScore')) || 0;
+
+    img.style.display = 'none';
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && game_state === 'Start') {
+        document.querySelectorAll('.pipe_sprite').forEach((e) => e.remove());
+        img.style.display = 'block';
+        shrimp.style.top = '40vh';
+        shrimp_dy = 0;
+        game_state = 'Play';
+        message.innerHTML = '';
+        score_val.innerHTML = '0';
+        shrimp_props = shrimp.getBoundingClientRect();
+        play();
+      }
+    });
+
+    let shrimp_dy = 0;
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key == 'ArrowUp' || e.key == ' ') {
+        img.src = 'images/shrimp-2.png';
+        shrimp_dy = -7.6;
+      }
+    });
+
+    document.addEventListener('keyup', (e) => {
+      if (e.key == 'ArrowUp' || e.key == ' ') {
+        img.src = 'images/shrimp.png';
+      }
+    });
+
+    function updateScore() {
+      let currentScore = parseInt(score_val.innerHTML) + 1;
+      score_val.innerHTML = currentScore;
+
+      if (currentScore > highScore) {
+        highScore = currentScore;
+        localStorage.setItem('highScore', highScore);
+        document.querySelector('.High_score_val').innerHTML = highScore;
+      }
+
+      Accumulated_score++;
+      document.querySelector('.Accumulated_score_val').innerHTML = Accumulated_score;
+      localStorage.setItem('accumulatedScore', Accumulated_score);
+    }
+
+    const pipeGradients = [
+      "radial-gradient(#1b5e20 40%, #388e3c 70%, #81c784 100%)",
+      "radial-gradient(#2e7d32 40%, #66bb6a 80%, #a5d6a7 100%)",
+      "radial-gradient(#4caf50 50%, #2c6b2f 80%, #1b5e20 100%)",
+      "radial-gradient(#8bc34a 50%, #4caf50 70%, #388e3c 90%)",
+      "radial-gradient(#2c6b2f 40%, #4caf50 80%, #81c784 100%)"
+    ];
+
+    function play() {
+      function move() {
+        if (game_state != 'Play') return;
+
+        let pipe_sprite = document.querySelectorAll('.pipe_sprite');
+        pipe_sprite.forEach((element) => {
+          let pipe_sprite_props = element.getBoundingClientRect();
+          shrimp_props = shrimp.getBoundingClientRect();
+
+          if (pipe_sprite_props.right <= 0) {
+            element.remove();
+          } else {
+            if (
+              shrimp_props.left < pipe_sprite_props.left + pipe_sprite_props.width &&
+              shrimp_props.left + shrimp_props.width > pipe_sprite_props.left &&
+              shrimp_props.top < pipe_sprite_props.top + pipe_sprite_props.height &&
+              shrimp_props.top + shrimp_props.height > pipe_sprite_props.top
+            ) {
+              gameOver();
+              return;
+            } else {
+              if (
+                pipe_sprite_props.right < shrimp_props.left &&
+                pipe_sprite_props.right + move_speed >= shrimp_props.left &&
+                element.getAttribute('increase_score') === '1'
+              ) {
+                updateScore();
+                element.setAttribute('increase_score', '0');
+              }
+              element.style.left = pipe_sprite_props.left - move_speed + 'px';
+            }
+          }
+        });
+        requestAnimationFrame(move);
+      }
+      requestAnimationFrame(move);
+
+      function apply_gravity() {
+        if (game_state !== 'Play') return;
+
+        shrimp_dy += gravity;
+        if (shrimp_props.top <= 0 || shrimp_props.bottom >= background.bottom) {
+          gameOver();
+          return;
+        }
+
+        shrimp.style.top = shrimp_props.top + shrimp_dy + 'px';
+        shrimp_props = shrimp.getBoundingClientRect();
+        requestAnimationFrame(apply_gravity);
+      }
+
+      requestAnimationFrame(apply_gravity);
+
+      let pipe_seperation = 0;
+      let pipe_gap = 40;
+
+      function create_pipe() {
+        if (game_state != 'Play') return;
+
+        if (pipe_seperation > 115) {
+          pipe_seperation = 0;
+          let pipe_posi = Math.floor(Math.random() * 43) + 8;
+
+          let pipe_sprite_inv = document.createElement('div');
+          pipe_sprite_inv.className = 'pipe_sprite';
+          pipe_sprite_inv.style.top = pipe_posi - 70 + 'vh';
+          pipe_sprite_inv.style.left = '100vw';
+          pipe_sprite_inv.style.background = pipeGradients[Math.floor(Math.random() * pipeGradients.length)];
+          document.body.appendChild(pipe_sprite_inv);
+
+          let pipe_sprite = document.createElement('div');
+          pipe_sprite.className = 'pipe_sprite';
+          pipe_sprite.style.top = pipe_posi + pipe_gap + 'vh';
+          pipe_sprite.style.left = '100vw';
+          pipe_sprite.setAttribute('increase_score', '1');
+          pipe_sprite.style.background = pipeGradients[Math.floor(Math.random() * pipeGradients.length)];
+          document.body.appendChild(pipe_sprite);
+        }
+        pipe_seperation++;
+        requestAnimationFrame(create_pipe);
+      }
+      requestAnimationFrame(create_pipe);
+    }
+
+    function gameOver() {
+      game_state = 'End';
+      message.innerHTML = `
+        <div style="position: relative; display: inline-block;">
+          <img src="images/gameover.png" alt="Game Over" style="width: 760px; height: auto;" />
+          <div class="messagestyle">
+            <p>Score This Round: ${score_val.innerHTML}</p>
+            <p>Accumulated Points: ${Accumulated_score}</p>
+            <p>Highest Score So Far: ${highScore}</p>
+          </div>
+        </div>
+        <div class="buttons-container">
+          <a href="easy.html" class="restartbutton">
+            <img src="images/restartbutton.png" alt="restart button">
+          </a>
+          <a href="gameinfo.html" class="exitbutton">
+            <img src="images/exitbutton.png" alt="exit button">
+          </a>
+        </div>
+      `;
+      img.style.display = 'none';
+    }
+  </script>
+</body>
+</html>

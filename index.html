@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flappy Shrimp</title>
+    <meta name="author" content="GR3-Lithium">
+    <meta name="keywords" content="AA2">
+    <meta name="revised" content="02-05-2025">
+    <link rel="icon" type="image/png" href="images/favicon.ico"/>
+    <style>
+        body {
+            background-image: url("images/Flappy shrimp.png");
+            background-color: #117864;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .button img {
+            margin-top: 40px;
+            width: 450px;
+            height: auto;
+            display: block;
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); } /* Slightly grow */
+            100% { transform: scale(1); } /* Back to normal */
+        }
+
+        .button img:hover {
+            transform: scale(1.15); /* Slight zoom when hovered */
+        }
+    </style>
+</head>
+<body>
+
+    <a href="gameinfo.html" class="button">
+        <img src="images/Flappy shrimp button.png" alt="Learn More">
+    </a>
+
+</body>
+</html>
