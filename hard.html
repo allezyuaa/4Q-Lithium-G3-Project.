@@ -144,16 +144,16 @@
 
   <script>
     window.onload = function () {
-       // Retrieve accumulated score and highest score, default to 0 if not found in cookies
+
        let accumulatedScore = parseInt(getCookie("accumulatedPoints")) || 0;
        let highScore = parseInt(getCookie("highestScore")) || 0;
  
-       // Update the displayed values
+
        document.querySelector('.Accumulated_score_val').innerHTML = accumulatedScore;
        document.querySelector('.High_score_val').innerHTML = highScore;
     }
  
-    // Function to get a cookie value by name
+
     function getCookie(name) {
        let decodedCookie = decodeURIComponent(document.cookie);
        let cookies = decodedCookie.split(';');
@@ -166,10 +166,10 @@
        return "";
     }
  
-    // Function to set a cookie
+
     function setCookie(name, value, days) {
        let d = new Date();
-       d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000)); // Expiration time
+       d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000)); 
        let expires = "expires=" + d.toUTCString();
        document.cookie = name + "=" + value + ";" + expires + ";path=/";
     }
@@ -184,7 +184,7 @@
     let game_state = 'Start';
  
     let Accumulated_score = parseInt(getCookie('accumulatedPoints')) || 0;
-    let highScore = parseInt(getCookie('highestScore')) || 0;  // Fixed key name
+    let highScore = parseInt(getCookie('highestScore')) || 0;  
  
     img.style.display = 'none';
  
@@ -238,17 +238,17 @@
        let currentScore = parseInt(score_val.innerHTML) + 1;
        score_val.innerHTML = currentScore;
  
-       // Update the highest score
+
        if (currentScore > highScore) {
           highScore = currentScore;
-          setCookie('highestScore', highScore, 365);  // Save the new high score for a year
+          setCookie('highestScore', highScore, 365);  
           document.querySelector('.High_score_val').innerHTML = highScore;
        }
  
-       // Update accumulated score
+
        Accumulated_score++;
        document.querySelector('.Accumulated_score_val').innerHTML = Accumulated_score;
-       setCookie('accumulatedPoints', Accumulated_score, 365);  // Save the accumulated score for a year
+       setCookie('accumulatedPoints', Accumulated_score, 365);  
     }
  
     function play() {
@@ -319,7 +319,7 @@
              const pipeTopY = pipe_posi - 70;
              const pipeBottomY = pipe_posi + pipe_gap;
  
-             // Create top pipe
+
              let pipe_sprite_inv = document.createElement('div');
              pipe_sprite_inv.className = 'pipe_sprite';
              pipe_sprite_inv.style.top = pipeTopY + 'vh';
@@ -327,7 +327,7 @@
              pipe_sprite_inv.style.background = color;
              document.body.appendChild(pipe_sprite_inv);
  
-             // Create bottom pipe
+
              let pipe_sprite = document.createElement('div');
              pipe_sprite.className = 'pipe_sprite';
              pipe_sprite.style.top = pipeBottomY + 'vh';
@@ -336,15 +336,15 @@
              pipe_sprite.style.background = color;
              document.body.appendChild(pipe_sprite);
  
-             // Add obstacle only below the bottom pipe
+   
              if (Math.random() < 0.5) {
                  const obstacleBottom = document.createElement('img');
                  obstacleBottom.className = 'obstacle';
                  obstacleBottom.src = obstacleImages[Math.floor(Math.random() * obstacleImages.length)];
-                 obstacleBottom.style.width = '100px'; // Larger size
+                 obstacleBottom.style.width = '100px'; 
                  obstacleBottom.style.height = 'auto';
                  obstacleBottom.style.left = '100vw';
-                 obstacleBottom.style.top = `calc(${pipeBottomY}vh - 100px)`; // Below bottom pipe
+                 obstacleBottom.style.top = `calc(${pipeBottomY}vh - 100px)`; 
                  document.body.appendChild(obstacleBottom);
              }
           }
