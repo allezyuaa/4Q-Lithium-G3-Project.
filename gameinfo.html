@@ -121,14 +121,38 @@
     <div id="greeting"></div>
 
     <script>
+
+        function setCookie(name, value, days) {
+            let expires = "";
+            if (days) {
+                const date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/";
+        }
+
+
+        function getCookie(name) {
+            let nameEQ = name + "=";
+            let ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length); 
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length); 
+            }
+            return null;
+        }
+
         function saveUsername(event) {
             event.preventDefault();
             let username = document.getElementById("username").value;
 
             if (username.match(/^[A-Za-z0-9]+$/)) {
-                localStorage.setItem("username", username);
-                localStorage.setItem("accumulatedScore", "0");
-                localStorage.getItem("highScore", "0");
+                setCookie("username", username, 7); 
+                setCookie("accumulatedPoints", "0", 7);
+                setCookie("highestScore", "0", 7); 
+
                 displayGreeting();
                 createConfetti(0);
 
@@ -138,7 +162,6 @@
                     const confetti = document.createElement("div");
                     confetti.className = "confetti";
 
-             
                     const colors = ["#ff007f", "#00e5ff", "#00ff85", "#ffd300", "#ff4d00", "#8f00ff"];
                     const color = colors[Math.floor(Math.random() * colors.length)];
 
@@ -163,16 +186,15 @@
         }
 
         function displayGreeting() {
-            let savedUsername = localStorage.getItem("username");
+            let savedUsername = getCookie("username");
             if (savedUsername) {
                 document.getElementById("greeting").innerText = `Welcome, ${savedUsername}!`;
             }
 
-            let Accumulated_score = 0;
-            const scoreElement = document.querySelector('.Accumulated_score_val');
-            if (scoreElement) {
-                scoreElement.innerHTML = Accumulated_score;
-            }
+            let accumulatedPoints = getCookie("accumulatedPoints") || 0;
+            let highestScore = getCookie("highestScore") || 0;
+
+            console.log(`Accumulated Points: ${accumulatedPoints}, Highest Score: ${highestScore}`);
         }
 
         window.onload = displayGreeting;
