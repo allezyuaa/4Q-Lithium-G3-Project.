@@ -135,14 +135,34 @@
 
   <script>
     window.onload = function () {
-      let accumulatedScore = localStorage.getItem("accumulatedScore") || 0;
-      accumulatedScore = parseInt(accumulatedScore);
-
-      let highScore = localStorage.getItem("highScore") || 0;
-      highScore = parseInt(highScore);
-
-      document.querySelector('.Accumulated_score_val').innerHTML = accumulatedScore;
-      document.querySelector('.High_score_val').innerHTML = highScore;
+       // Retrieve accumulated score and highest score, default to 0 if not found in cookies
+       let accumulatedScore = parseInt(getCookie("accumulatedPoints")) || 0;
+       let highScore = parseInt(getCookie("highestScore")) || 0;
+ 
+       // Update the displayed values
+       document.querySelector('.Accumulated_score_val').innerHTML = accumulatedScore;
+       document.querySelector('.High_score_val').innerHTML = highScore;
+    }
+ 
+    // Function to get a cookie value by name
+    function getCookie(name) {
+       let decodedCookie = decodeURIComponent(document.cookie);
+       let cookies = decodedCookie.split(';');
+       for (let i = 0; i < cookies.length; i++) {
+          let cookie = cookies[i].trim();
+          if (cookie.indexOf(name + "=") === 0) {
+             return cookie.substring(name.length + 1, cookie.length);
+          }
+       }
+       return "";
+    }
+ 
+    // Function to set a cookie
+    function setCookie(name, value, days) {
+       let d = new Date();
+       d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000)); // Expiration time
+       let expires = "expires=" + d.toUTCString();
+       document.cookie = name + "=" + value + ";" + expires + ";path=/";
     }
 
     let move_speed = 3, gravity = 0.5;
@@ -154,8 +174,8 @@
     let message = document.querySelector('.message');
     let game_state = 'Start';
 
-    let Accumulated_score = parseInt(localStorage.getItem('accumulatedScore')) || 0;
-    let highScore = parseInt(localStorage.getItem('highScore')) || 0;
+    let Accumulated_score = parseInt(getCookie('accumulatedPoints')) || 0;
+    let highScore = parseInt(getCookie('highestScore')) || 0;  // Fixed key name
 
     img.style.display = 'none';
 
@@ -189,19 +209,23 @@
     });
 
     function updateScore() {
-      let currentScore = parseInt(score_val.innerHTML) + 1;
-      score_val.innerHTML = currentScore;
+    let currentScore = parseInt(score_val.innerHTML) + 1;
+    score_val.innerHTML = currentScore;
 
-      if (currentScore > highScore) {
-        highScore = currentScore;
-        localStorage.setItem('highScore', highScore);
-        document.querySelector('.High_score_val').innerHTML = highScore;
-      }
+   // Update the highest score
+if (currentScore > highScore) {
+    highScore = currentScore;
+    setCookie('highestScore', highScore, 365); // <- updated
+    document.querySelector('.High_score_val').innerHTML = highScore;
+}
 
-      Accumulated_score++;
-      document.querySelector('.Accumulated_score_val').innerHTML = Accumulated_score;
-      localStorage.setItem('accumulatedScore', Accumulated_score);
-    }
+// Update accumulated score
+Accumulated_score++;
+document.querySelector('.Accumulated_score_val').innerHTML = Accumulated_score;
+setCookie('accumulatedPoints', Accumulated_score, 365); // <- updated
+
+}
+
 
     const pipeGradients = [
       "radial-gradient(#1b5e20 40%, #388e3c 70%, #81c784 100%)",
